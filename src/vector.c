@@ -6,11 +6,7 @@ Vector *create_vector(unsigned long size) {
   Vector *vector = malloc(sizeof(Vector));
 
   vector->size = size;
-  vector->values = malloc(sizeof(long) * size);
-
-  for (unsigned long i = 0; i < size; i++) {
-    vector->values[i] = 0;
-  }
+  vector->values = calloc(sizeof(long) * size, sizeof(long));
 
   return vector;
 }
