@@ -32,5 +32,6 @@ extern MatMultProofStartResult mat_mult_prover_start(MatMultProver *prover,
                                                      Matrix *matrix_product);
 extern Vector *mat_mult_prover_execute_next_round(MatMultProver *prover,
                                                   long chosen_value);
+extern void destroy_mat_mult_prover(MatMultProver *prover);
 
 #endif

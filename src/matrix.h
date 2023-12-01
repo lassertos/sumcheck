@@ -14,5 +14,6 @@ extern void print_matrix(Matrix *);
 extern Vector *matrix_to_function(Matrix *);
 extern Matrix *square_adjacency_matrix(Matrix *);
 extern Matrix *multiply_matrices(Matrix *, Matrix *);
+extern void destroy_matrix(Matrix *matrix);
 
 #endif

@@ -60,6 +60,8 @@ mat_mult_verifier_execute_next_round(MatMultVerifier *verifier,
       evaluate_univariate_lagrange_interpolation(values, chosen_value,
                                                  verifier->base);
 
+  destroy_vector(values);
+
   if (verifier->round == verifier->last_round)
     return execute_last_round(verifier);
 
@@ -98,5 +100,18 @@ MatMultVerificationResult execute_last_round(MatMultVerifier *verifier) {
       .result = result == verifier->claimed_results->values[verifier->round],
       .finished = 1};
 
+  destroy_vector(matrix_function_a);
+  destroy_vector(matrix_function_b);
+  destroy_vector(vector_a);
+  destroy_vector(vector_b);
+
   return validation_result;
+}
+
+void destroy_mat_mult_verifier(MatMultVerifier *verifier) {
+  destroy_vector(verifier->chosen_values);
+  destroy_vector(verifier->claimed_results);
+  destroy_vector(verifier->indexes_1);
+  destroy_vector(verifier->indexes_2);
+  free(verifier);
 }

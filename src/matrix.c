@@ -21,11 +21,11 @@ Matrix *create_matrix(unsigned int rows, unsigned int columns) {
 }
 
 void destroy_matrix(Matrix *matrix) {
-  // for (int i = 0; i < matrix->rows; i++) {
-  //   free(matrix->values[i]);
-  // }
-  // free(matrix->values);
-  // free(matrix);
+  for (int i = 0; i < matrix->rows; i++) {
+    free(matrix->values[i]);
+  }
+  free(matrix->values);
+  free(matrix);
 }
 
 Matrix *multiply_matrices(Matrix *matrix_a, Matrix *matrix_b) {

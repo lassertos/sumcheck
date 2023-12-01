@@ -36,5 +36,6 @@ counting_triangles_prover_execute_next_round(CountingTrianglesProver *prover,
                                              long chosen_value);
 extern MatMultProofStartResult counting_triangles_prover_start_mat_mult_proof(
     CountingTrianglesProver *prover, Vector *indexes_1, Vector *indexes_2);
+extern void destroy_counting_triangles_prover(CountingTrianglesProver *prover);
 
 #endif

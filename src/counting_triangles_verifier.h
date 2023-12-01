@@ -39,5 +39,7 @@ counting_triangles_verifier_execute_next_round(
 extern CountingTrianglesVerificationResult
 counting_triangles_verifier_execute_last_round(
     CountingTrianglesVerifier *verifier);
+extern void
+destroy_counting_triangles_verifier(CountingTrianglesVerifier *verifier);
 
 #endif

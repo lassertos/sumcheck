@@ -9,6 +9,7 @@ Graph *create_random_graph(unsigned long nodes) {
   graph->nodes = nodes;
 
   graph->edges = malloc(sizeof(Edge) * (((nodes * nodes)) / 2) - nodes);
+  graph->size_edges = 0;
 
   for (unsigned int i = 0; i < nodes; i++) {
     for (unsigned int j = i + 1; j < nodes; j++) {
@@ -48,31 +49,12 @@ unsigned long count_triangles(Graph *graph) {
     }
   }
 
-  free(adjacency_matrix);
+  destroy_matrix(adjacency_matrix);
 
   return result;
 }
 
-// unsigned long count_triangles(Graph *graph)
-// {
-//     Matrix *adjacency_matrix = get_adjacency_matrix(graph);
-
-//     unsigned long result = 0;
-//     for (unsigned int i = 0; i < graph->nodes; i++)
-//     {
-//         for (unsigned int j = 0; j < graph->nodes; j++)
-//         {
-//             for (unsigned int k = 0; k < graph->nodes; k++)
-//             {
-//                 if (adjacency_matrix->values[i][j] &&
-//                 adjacency_matrix->values[j][k] &&
-//                 adjacency_matrix->values[i][k])
-//                     result++;
-//             }
-//         }
-//     }
-
-//     free(adjacency_matrix);
-
-//     return result / 6;
-// }
+void destroy_graph(Graph *graph) {
+  free(graph->edges);
+  free(graph);
+}

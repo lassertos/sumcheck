@@ -1,4 +1,6 @@
-project('sumcheck', 'c', default_options: ['optimization=2'])
+project('sumcheck', 'c', default_options: [
+    'optimization=2'
+])
 sources = files(
     'src/main.c', 
     'src/graph.c', 
@@ -11,5 +13,7 @@ sources = files(
     'src/mat_mult_prover.c',
     'src/mat_mult_verifier.c',
 )
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : false)
 gmp = dependency('gmp')
-executable('demo', sources, link_args : '-lm', dependencies : [gmp])
+executable('demo', sources, dependencies : [gmp, m_dep])

@@ -17,5 +17,6 @@ typedef struct {
 extern Graph *create_random_graph(unsigned long);
 extern Matrix *get_adjacency_matrix(Graph *);
 extern unsigned long count_triangles(Graph *);
+extern void destroy_graph(Graph *graph);
 
 #endif

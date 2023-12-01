@@ -43,12 +43,10 @@ MatMultProofStartResult mat_mult_prover_start(MatMultProver *prover,
 
   Matrix *prepared = create_matrix(2, prover->matrix_a->rows);
   for (unsigned int i = 0; i < prover->matrix_a->rows; i++) {
-    BinaryVector *w = create_binary_vector_from(prover->power, i);
     prepared->values[0][i] =
-        evaluate_lagrange_basis_polynomial(w, prover->indexes_1, prover->base);
+        evaluate_lagrange_basis_polynomial(i, prover->indexes_1, prover->base);
     prepared->values[1][i] =
-        evaluate_lagrange_basis_polynomial(w, prover->indexes_2, prover->base);
-    free(w);
+        evaluate_lagrange_basis_polynomial(i, prover->indexes_2, prover->base);
   }
 
   for (unsigned int i = 0; i < prover->matrix_a->rows; i++) {
@@ -75,6 +73,11 @@ MatMultProofStartResult mat_mult_prover_start(MatMultProver *prover,
                                                prover->base);
 
   // TODO: free result_matrix, result_matrix_function, prepared and vector
+  if (matrix_product == NULL)
+    destroy_matrix(result_matrix);
+  destroy_matrix(prepared);
+  destroy_vector(result_matrix_function);
+  destroy_vector(vector);
 
   MatMultProofStartResult start_result = {
       .result = result,
@@ -112,8 +115,8 @@ Vector *mat_mult_prover_execute_next_round(MatMultProver *prover,
       new_values_b->values[i] = modulo(tmp, prover->base);
     }
 
-    free(prover->values_a);
-    free(prover->values_b);
+    destroy_vector(prover->values_a);
+    destroy_vector(prover->values_b);
 
     prover->values_a = new_values_a;
     prover->values_b = new_values_b;
@@ -171,4 +174,11 @@ Vector *mat_mult_prover_execute_next_round(MatMultProver *prover,
   }
 
   return new_values;
+}
+
+void destroy_mat_mult_prover(MatMultProver *prover) {
+  destroy_vector(prover->chosen_values);
+  destroy_vector(prover->values_a);
+  destroy_vector(prover->values_b);
+  free(prover);
 }

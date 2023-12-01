@@ -35,5 +35,6 @@ mat_mult_verifier_start_validation(MatMultVerifier *verifier,
 extern MatMultVerificationResult
 mat_mult_verifier_execute_next_round(MatMultVerifier *verifier, Vector *values);
 extern MatMultVerificationResult execute_last_round(MatMultVerifier *verifier);
+extern void destroy_mat_mult_verifier(MatMultVerifier *verifier);
 
 #endif

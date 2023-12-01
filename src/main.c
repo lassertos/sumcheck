@@ -13,7 +13,7 @@
 int main(int argc, char **argv) {
   srand(1);
 
-  unsigned long size = 1000;
+  unsigned long size = 2048;
   long max = (1L << 62) - 1;
 
   mpz_t prime;
@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
     return 1;
 
   long base = mpz_get_si(prime);
+  mpz_clear(prime);
 
   printf("Base: %ld\n", base);
 
@@ -44,13 +45,15 @@ int main(int argc, char **argv) {
 
   CountingTrianglesProofStartResult proof_start_result =
       counting_triangles_prover_start(prover);
-  CountingTrianglesVerificationResult verification_result =
-      counting_triangles_verifier_start_validation(
-          verifier, proof_start_result.result, proof_start_result.values);
 
   printf("Prover Round 1: %ld, ", proof_start_result.result);
   print_vector(proof_start_result.values);
   printf("\n");
+
+  CountingTrianglesVerificationResult verification_result =
+      counting_triangles_verifier_start_validation(
+          verifier, proof_start_result.result, proof_start_result.values);
+
   printf("Verifier Round 1: %d, %ld, %ld \n", verification_result.result,
          verification_result.chosen_value,
          verifier->claimed_results->values[verifier->round]);
@@ -85,6 +88,10 @@ int main(int argc, char **argv) {
          (stop - start) / (CLOCKS_PER_SEC / 1000));
 
   printf("Triangles: %lu\n", triangles);
+
+  destroy_graph(graph);
+  destroy_counting_triangles_prover(prover);
+  destroy_counting_triangles_verifier(verifier);
 
   return 0;
 }

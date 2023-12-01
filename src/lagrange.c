@@ -27,26 +27,34 @@ unsigned long evaluate_univariate_lagrange_interpolation(Vector *vector, long X,
 
       mpf_div(inner_result_div, Xk, ik);
       mpf_mul(inner_result, inner_result, inner_result_div);
+      mpf_clears(Xk, ik, NULL);
     }
 
     mpf_mul(inner_result, inner_result, vector_i);
     mpf_add(result, result, inner_result);
+
+    mpf_clears(inner_result, inner_result_div, vector_i, NULL);
   }
 
   mpz_set_f(result_int, result);
   mpz_mod_ui(result_int, result_int, base);
 
-  return mpz_get_ui(result_int);
+  unsigned long final_result = mpz_get_ui(result_int);
+
+  mpf_clear(result);
+  mpz_clear(result_int);
+
+  return final_result;
 }
 
-unsigned long evaluate_lagrange_basis_polynomial(BinaryVector *w, Vector *x,
+unsigned long evaluate_lagrange_basis_polynomial(unsigned long w, Vector *x,
                                                  long base) {
-  long result = 1;
+  __int128_t result = 1;
 
-  for (unsigned int i = 0; i < w->size; i++) {
-    __int128_t tmp = w->values[i] == 1
-                         ? (__int128_t)result * (__int128_t)x->values[i]
-                         : (__int128_t)result * (__int128_t)(1L - x->values[i]);
+  for (unsigned int i = 0; i < x->size; i++) {
+    __int128_t tmp = (w & (0x1 << (x->size - (i + 1)))) > 0
+                         ? result * x->values[i]
+                         : result * (1L - x->values[i]);
     result = modulo(tmp, base);
   }
 
@@ -61,9 +69,8 @@ unsigned long evaluate_multilinear_extension(Vector *base_values,
   for (unsigned long i = 0; i < base_values->size; i++) {
     if (!base_values->values[i])
       continue;
-    BinaryVector *binary_i = create_binary_vector_from(vector->size, i);
     __int128_t v1 = base_values->values[i];
-    __int128_t v2 = evaluate_lagrange_basis_polynomial(binary_i, vector, base);
+    __int128_t v2 = evaluate_lagrange_basis_polynomial(i, vector, base);
     __int128_t tmp = v1 * v2;
     tmp_result += modulo(tmp, base);
     tmp_result = modulo(tmp_result, base);

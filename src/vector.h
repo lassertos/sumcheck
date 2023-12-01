@@ -14,8 +14,6 @@ typedef struct {
 extern Vector *create_vector(unsigned long);
 extern Vector *create_vector_from(unsigned long, long *);
 extern void print_vector(Vector *vector);
-
-extern BinaryVector *create_binary_vector_from(unsigned long, long);
-extern void print_binary_vector(BinaryVector *binary_vector);
+extern void destroy_vector(Vector *vector);
 
 #endif

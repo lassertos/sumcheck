@@ -104,8 +104,8 @@ counting_triangles_prover_execute_next_round(CountingTrianglesProver *prover,
       new_values_b->values[i] = modulo(tmp, prover->base);
     }
 
-    free(prover->values_a);
-    free(prover->values_b);
+    destroy_vector(prover->values_a);
+    destroy_vector(prover->values_b);
 
     prover->values_a = new_values_a;
     prover->values_b = new_values_b;
@@ -181,4 +181,14 @@ MatMultProofStartResult counting_triangles_prover_start_mat_mult_proof(
   prover->time_taken += ((clock() - start) / (CLOCKS_PER_SEC / 1000));
 
   return result;
+}
+
+void destroy_counting_triangles_prover(CountingTrianglesProver *prover) {
+  destroy_matrix(prover->adjacency_matrix);
+  destroy_matrix(prover->squared_adjacency_matrix);
+  destroy_vector(prover->chosen_values);
+  destroy_vector(prover->values_a);
+  destroy_vector(prover->values_b);
+  destroy_mat_mult_prover(prover->mat_mult_prover);
+  free(prover);
 }
