@@ -16,4 +16,11 @@ sources = files(
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
 gmp = dependency('gmp')
-executable('demo', sources, dependencies : [gmp, m_dep])
+gsl = dependency('gsl')
+executable(
+    'demo', 
+    sources, 
+    # c_args: ['-pg'], 
+    # link_args: ['-pg'], 
+    dependencies : [gmp, m_dep, gsl]
+)

@@ -12,7 +12,7 @@ typedef struct {
 } BinaryVector;
 
 extern Vector *create_vector(unsigned long);
-extern Vector *create_vector_from(unsigned long, long *);
+extern Vector *copy_vector(Vector *);
 extern void print_vector(Vector *vector);
 extern void destroy_vector(Vector *vector);
 

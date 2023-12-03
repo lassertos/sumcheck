@@ -23,6 +23,7 @@ typedef struct {
   unsigned char result;
   unsigned char finished;
   long chosen_value;
+  Vector **needed_tables;
 } MatMultVerificationResult;
 
 extern MatMultVerifier *create_mat_mult_verifier(Matrix *matrix_a,

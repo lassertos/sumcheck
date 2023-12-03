@@ -162,8 +162,9 @@ counting_triangles_verifier_execute_last_round(
 
   __int128_t tmp =
       (__int128_t)mat_mult_proof_start_result.result *
-      (__int128_t)evaluate_multilinear_extension(
-          adjacency_matrix_function, verifier->chosen_values, verifier->base);
+      (__int128_t)evaluate_multilinear_extension_with_needed_tables(
+          adjacency_matrix_function, verifier->chosen_values, verifier->base,
+          mat_mult_verification_result.needed_tables);
 
   long result = modulo(tmp, verifier->base);
 
@@ -173,6 +174,12 @@ counting_triangles_verifier_execute_last_round(
       .triangles = verifier->claimed_results->values[0]};
 
   destroy_vector(adjacency_matrix_function);
+
+  // destroy needed_tables
+  for (unsigned int i = 0; i < verifier->chosen_values->size; i++) {
+    destroy_vector(mat_mult_verification_result.needed_tables[i]);
+  }
+  free(mat_mult_verification_result.needed_tables);
 
   verifier->time_taken += ((clock() - start) / (CLOCKS_PER_SEC / 1000));
 

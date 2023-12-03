@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include <gsl/gsl_blas.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,18 +53,39 @@ Matrix *square_adjacency_matrix(Matrix *adjacency_matrix) {
   if (adjacency_matrix->rows != adjacency_matrix->columns)
     return NULL;
 
+  unsigned int size = adjacency_matrix->rows * adjacency_matrix->columns;
+
+  double *preparedA = malloc(sizeof(double) * size);
+  double *preparedB = malloc(sizeof(double) * size);
+  double *preparedC = malloc(sizeof(double) * size);
+
+  for (unsigned int i = 0; i < adjacency_matrix->rows; i++) {
+    for (unsigned int j = 0; j < adjacency_matrix->columns; j++) {
+      preparedA[i * adjacency_matrix->rows + j] =
+          (double)(adjacency_matrix->values[i][j]);
+      preparedB[i * adjacency_matrix->rows + j] =
+          (double)(adjacency_matrix->values[i][j]);
+      preparedC[i * adjacency_matrix->rows + j] = 0.0;
+    }
+  }
+
   Matrix *squared_adjacency_matrix =
       create_matrix(adjacency_matrix->rows, adjacency_matrix->columns);
 
+  gsl_matrix_view A = gsl_matrix_view_array(preparedA, adjacency_matrix->rows,
+                                            adjacency_matrix->columns);
+  gsl_matrix_view B = gsl_matrix_view_array(preparedB, adjacency_matrix->rows,
+                                            adjacency_matrix->columns);
+  gsl_matrix_view C = gsl_matrix_view_array(preparedC, adjacency_matrix->rows,
+                                            adjacency_matrix->columns);
+
+  gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, &A.matrix, &B.matrix, 0.0,
+                 &C.matrix);
+
   for (unsigned int i = 0; i < adjacency_matrix->rows; i++) {
-    for (unsigned int j = 0; j < i + 1; j++) {
-      for (unsigned int k = 0; k < adjacency_matrix->rows; k++) {
-        if (adjacency_matrix->values[i][k] && adjacency_matrix->values[k][j]) {
-          squared_adjacency_matrix->values[i][j]++;
-          if (i != j)
-            squared_adjacency_matrix->values[j][i]++;
-        }
-      }
+    for (unsigned int j = 0; j < adjacency_matrix->columns; j++) {
+      squared_adjacency_matrix->values[i][j] =
+          (long)preparedC[i * adjacency_matrix->rows + j];
     }
   }
 
@@ -79,7 +101,7 @@ Vector *matrix_to_function(Matrix *matrix) {
   }
 
   unsigned int new_size = pow(2.0, ceil(log2(max)));
-  Vector *function = create_vector(sizeof(long) * new_size * new_size);
+  Vector *function = create_vector(new_size * new_size);
 
   for (unsigned int i = 0; i < new_size; i++) {
     for (unsigned int j = 0; j < new_size; j++) {

@@ -61,16 +61,89 @@ unsigned long evaluate_lagrange_basis_polynomial(unsigned long w, Vector *x,
   return result;
 }
 
+Vector **build_needed_tables(Vector *base_values, long base) {
+  long size = lround(log2((double)base_values->size));
+  Vector **needed_tables = malloc(sizeof(Vector) * size);
+  needed_tables[size - 1] = copy_vector(base_values);
+
+  for (int i = size - 2; i >= 0; i--) {
+    needed_tables[i] = create_vector(needed_tables[i + 1]->size / 2);
+    for (unsigned int j = 0; j < needed_tables[i]->size; j++) {
+      needed_tables[i]->values[j] = needed_tables[i + 1]->values[j * 2] ||
+                                    needed_tables[i + 1]->values[j * 2 + 1];
+    }
+  }
+
+  return needed_tables;
+}
+
 unsigned long evaluate_multilinear_extension(Vector *base_values,
                                              Vector *vector, long base) {
   __int128_t tmp_result = 0;
   unsigned long result = 0;
 
+  Vector *table = create_vector(1);
+  table->values[0] = 1;
+
+  for (unsigned int i = 0; i < vector->size; i++) {
+    Vector *tmp_table = create_vector(table->size * 2);
+    for (unsigned int j = 0; j < table->size; j++) {
+      tmp_table->values[j * 2] = modulo((__int128_t)table->values[j] *
+                                            (__int128_t)(1 - vector->values[i]),
+                                        base);
+
+      tmp_table->values[j * 2 + 1] = modulo(
+          (__int128_t)table->values[j] * (__int128_t)vector->values[i], base);
+    }
+    // destroy_vector(table);
+    table = tmp_table;
+  }
+
   for (unsigned long i = 0; i < base_values->size; i++) {
-    if (!base_values->values[i])
+    if (!base_values->values[i]) {
       continue;
+    }
     __int128_t v1 = base_values->values[i];
-    __int128_t v2 = evaluate_lagrange_basis_polynomial(i, vector, base);
+    __int128_t v2 = table->values[i];
+    __int128_t tmp = v1 * v2;
+    tmp_result += modulo(tmp, base);
+    tmp_result = modulo(tmp_result, base);
+  }
+
+  result = tmp_result;
+  return result;
+}
+
+unsigned long evaluate_multilinear_extension_with_needed_tables(
+    Vector *base_values, Vector *vector, long base, Vector **needed_tables) {
+  __int128_t tmp_result = 0;
+  unsigned long result = 0;
+
+  Vector *table = create_vector(1);
+  table->values[0] = 1;
+
+  for (unsigned int i = 0; i < vector->size; i++) {
+    Vector *tmp_table = create_vector(table->size * 2);
+    for (unsigned int j = 0; j < table->size; j++) {
+      if (needed_tables[i]->values[j * 2])
+        tmp_table->values[j * 2] = modulo(
+            (__int128_t)table->values[j] * (__int128_t)(1 - vector->values[i]),
+            base);
+
+      if (needed_tables[i]->values[j * 2 + 1])
+        tmp_table->values[j * 2 + 1] = modulo(
+            (__int128_t)table->values[j] * (__int128_t)vector->values[i], base);
+    }
+    destroy_vector(table);
+    table = tmp_table;
+  }
+
+  for (unsigned long i = 0; i < base_values->size; i++) {
+    if (!base_values->values[i]) {
+      continue;
+    }
+    __int128_t v1 = base_values->values[i];
+    __int128_t v2 = table->values[i];
     __int128_t tmp = v1 * v2;
     tmp_result += modulo(tmp, base);
     tmp_result = modulo(tmp_result, base);

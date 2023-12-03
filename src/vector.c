@@ -11,14 +11,14 @@ Vector *create_vector(unsigned long size) {
   return vector;
 }
 
-Vector *create_vector_from(unsigned long size, long *values) {
-  Vector *vector = create_vector(size);
+Vector *copy_vector(Vector *vector) {
+  Vector *copy = create_vector(vector->size);
 
-  for (unsigned long i = 0; i < size; i++) {
-    vector->values[i] = values[i];
+  for (unsigned long i = 0; i < vector->size; i++) {
+    copy->values[i] = vector->values[i];
   }
 
-  return vector;
+  return copy;
 }
 
 void print_vector(Vector *vector) {

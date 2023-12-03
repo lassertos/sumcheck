@@ -88,17 +88,22 @@ MatMultVerificationResult execute_last_round(MatMultVerifier *verifier) {
     vector_b->values[i + verifier->power] = verifier->indexes_2->values[i];
   }
 
-  long value_a = evaluate_multilinear_extension(matrix_function_a, vector_a,
-                                                verifier->base);
-  long value_b = evaluate_multilinear_extension(matrix_function_b, vector_b,
-                                                verifier->base);
+  // special optimization for counting triangles
+  Vector **needed_tables =
+      build_needed_tables(matrix_function_a, verifier->base);
+
+  long value_a = evaluate_multilinear_extension_with_needed_tables(
+      matrix_function_a, vector_a, verifier->base, needed_tables);
+  long value_b = evaluate_multilinear_extension_with_needed_tables(
+      matrix_function_b, vector_b, verifier->base, needed_tables);
 
   __int128_t tmp = (__int128_t)value_a * (__int128_t)value_b;
   long result = modulo(tmp, verifier->base);
 
   MatMultVerificationResult validation_result = {
       .result = result == verifier->claimed_results->values[verifier->round],
-      .finished = 1};
+      .finished = 1,
+      .needed_tables = needed_tables};
 
   destroy_vector(matrix_function_a);
   destroy_vector(matrix_function_b);

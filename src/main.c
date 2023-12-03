@@ -13,7 +13,7 @@
 int main(int argc, char **argv) {
   srand(1);
 
-  unsigned long size = 2048;
+  unsigned long size = 1024;
   long max = (1L << 62) - 1;
 
   mpz_t prime;
