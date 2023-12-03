@@ -89,6 +89,10 @@ Matrix *square_adjacency_matrix(Matrix *adjacency_matrix) {
     }
   }
 
+  free(preparedA);
+  free(preparedB);
+  free(preparedC);
+
   return squared_adjacency_matrix;
 }
 

@@ -95,7 +95,7 @@ unsigned long evaluate_multilinear_extension(Vector *base_values,
       tmp_table->values[j * 2 + 1] = modulo(
           (__int128_t)table->values[j] * (__int128_t)vector->values[i], base);
     }
-    // destroy_vector(table);
+    destroy_vector(table);
     table = tmp_table;
   }
 
@@ -109,6 +109,8 @@ unsigned long evaluate_multilinear_extension(Vector *base_values,
     tmp_result += modulo(tmp, base);
     tmp_result = modulo(tmp_result, base);
   }
+
+  destroy_vector(table);
 
   result = tmp_result;
   return result;
@@ -148,6 +150,8 @@ unsigned long evaluate_multilinear_extension_with_needed_tables(
     tmp_result += modulo(tmp, base);
     tmp_result = modulo(tmp_result, base);
   }
+
+  destroy_vector(table);
 
   result = tmp_result;
   return result;
