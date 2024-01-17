@@ -56,14 +56,11 @@ Matrix *square_adjacency_matrix(Matrix *adjacency_matrix) {
   unsigned int size = adjacency_matrix->rows * adjacency_matrix->columns;
 
   double *preparedA = malloc(sizeof(double) * size);
-  double *preparedB = malloc(sizeof(double) * size);
   double *preparedC = malloc(sizeof(double) * size);
 
   for (unsigned int i = 0; i < adjacency_matrix->rows; i++) {
     for (unsigned int j = 0; j < adjacency_matrix->columns; j++) {
       preparedA[i * adjacency_matrix->rows + j] =
-          (double)(adjacency_matrix->values[i][j]);
-      preparedB[i * adjacency_matrix->rows + j] =
           (double)(adjacency_matrix->values[i][j]);
       preparedC[i * adjacency_matrix->rows + j] = 0.0;
     }
@@ -74,12 +71,10 @@ Matrix *square_adjacency_matrix(Matrix *adjacency_matrix) {
 
   gsl_matrix_view A = gsl_matrix_view_array(preparedA, adjacency_matrix->rows,
                                             adjacency_matrix->columns);
-  gsl_matrix_view B = gsl_matrix_view_array(preparedB, adjacency_matrix->rows,
-                                            adjacency_matrix->columns);
   gsl_matrix_view C = gsl_matrix_view_array(preparedC, adjacency_matrix->rows,
                                             adjacency_matrix->columns);
 
-  gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, &A.matrix, &B.matrix, 0.0,
+  gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, &A.matrix, &A.matrix, 0.0,
                  &C.matrix);
 
   for (unsigned int i = 0; i < adjacency_matrix->rows; i++) {
@@ -90,7 +85,6 @@ Matrix *square_adjacency_matrix(Matrix *adjacency_matrix) {
   }
 
   free(preparedA);
-  free(preparedB);
   free(preparedC);
 
   return squared_adjacency_matrix;

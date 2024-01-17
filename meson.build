@@ -20,7 +20,5 @@ gsl = dependency('gsl')
 executable(
     'demo', 
     sources, 
-    # c_args: ['-pg'], 
-    # link_args: ['-pg'], 
     dependencies : [gmp, m_dep, gsl]
 )

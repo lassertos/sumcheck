@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Graph *create_random_graph(unsigned long nodes) {
+Graph *create_random_graph(unsigned long nodes, unsigned int chance) {
   Graph *graph = malloc(sizeof(Graph));
 
   graph->nodes = nodes;
@@ -13,7 +13,7 @@ Graph *create_random_graph(unsigned long nodes) {
 
   for (unsigned int i = 0; i < nodes; i++) {
     for (unsigned int j = i + 1; j < nodes; j++) {
-      if (rand() % 100 < 20) {
+      if (rand() % 100 < chance) {
         graph->edges[graph->size_edges].node_a = i;
         graph->edges[graph->size_edges].node_b = j;
         graph->size_edges++;

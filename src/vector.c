@@ -23,7 +23,7 @@ Vector *copy_vector(Vector *vector) {
 
 void print_vector(Vector *vector) {
   printf("[");
-  for (unsigned int i = 0; i < vector->size; i++) {
+  for (unsigned long i = 0; i < vector->size; i++) {
     if (i == 0)
       printf("%ld", vector->values[i]);
     else

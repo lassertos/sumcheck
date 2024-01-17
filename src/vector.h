@@ -2,14 +2,9 @@
 #define VECTOR_H
 
 typedef struct {
-  unsigned int size;
+  unsigned long size;
   long *values;
 } Vector;
-
-typedef struct {
-  unsigned int size;
-  unsigned char *values;
-} BinaryVector;
 
 extern Vector *create_vector(unsigned long);
 extern Vector *copy_vector(Vector *);

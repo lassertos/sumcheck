@@ -55,6 +55,10 @@ counting_triangles_verifier_execute_next_round(
 
   __int128_t tmp = (__int128_t)eval_0 + (__int128_t)eval_1;
 
+  // printf("(%ld + %ld) %% %ld = %ld = %ld\n", eval_0, eval_1, verifier->base,
+  //        modulo(tmp, verifier->base),
+  //        verifier->claimed_results->values[verifier->round]);
+
   if (modulo(tmp, verifier->base) !=
       verifier->claimed_results->values[verifier->round]) {
     verifier->round++;
@@ -108,9 +112,10 @@ counting_triangles_verifier_execute_last_round(
       counting_triangles_prover_start_mat_mult_proof(verifier->prover,
                                                      indexes_1, indexes_2);
 
-  printf("MatMult Prover Round 1: %ld, ", mat_mult_proof_start_result.result);
-  print_vector(mat_mult_proof_start_result.values);
-  printf("\n");
+  // printf("MatMult Prover Round 1: %ld, ",
+  // mat_mult_proof_start_result.result);
+  // print_vector(mat_mult_proof_start_result.values);
+  // printf("\n");
 
   start = clock();
 
@@ -121,19 +126,19 @@ counting_triangles_verifier_execute_last_round(
 
   verifier->time_taken += ((clock() - start) / (CLOCKS_PER_SEC / 1000));
 
-  printf("MatMult Verifier Round 1: %d, %ld \n",
-         mat_mult_verification_result.result,
-         mat_mult_verification_result.chosen_value);
+  // printf("MatMult Verifier Round 1: %d, %ld \n",
+  //        mat_mult_verification_result.result,
+  //        mat_mult_verification_result.chosen_value);
 
   while (!mat_mult_verification_result.finished) {
     // TODO: free
     Vector *values = counting_triangles_prover_execute_next_round(
         verifier->prover, mat_mult_verification_result.chosen_value);
 
-    printf("MatMult Prover Round %d: ",
-           verifier->prover->round - verifier->power * 2);
-    print_vector(values);
-    printf("\n");
+    // printf("MatMult Prover Round %d: ",
+    //        verifier->prover->round - verifier->power * 2);
+    // print_vector(values);
+    // printf("\n");
 
     start = clock();
 
@@ -142,9 +147,9 @@ counting_triangles_verifier_execute_last_round(
 
     verifier->time_taken += ((clock() - start) / (CLOCKS_PER_SEC / 1000));
 
-    printf("MatMult Verifier Round %d: %d, %ld \n", mat_mult_verifier->round,
-           mat_mult_verification_result.result,
-           mat_mult_verification_result.chosen_value);
+    // printf("MatMult Verifier Round %d: %d, %ld \n", mat_mult_verifier->round,
+    //        mat_mult_verification_result.result,
+    //        mat_mult_verification_result.chosen_value);
 
     if (!mat_mult_verification_result.result) {
       CountingTrianglesVerificationResult verification_result = {.result = 0,
@@ -176,7 +181,7 @@ counting_triangles_verifier_execute_last_round(
   destroy_vector(adjacency_matrix_function);
 
   // destroy needed_tables
-  for (unsigned int i = 0; i < verifier->chosen_values->size; i++) {
+  for (unsigned long i = 0; i < verifier->chosen_values->size; i++) {
     destroy_vector(mat_mult_verification_result.needed_tables[i]);
   }
   free(mat_mult_verification_result.needed_tables);
