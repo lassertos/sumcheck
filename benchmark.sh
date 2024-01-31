@@ -1,9 +1,9 @@
 set -e
 
-meson setup builddir
-meson compile -C builddir
+meson setup build
+meson compile -C build
 
-sizes=(256 512 1024 2048 4096)
+sizes=(256 512 1024 2048 4096 8192)
 chances=(1 10 25 50 75 90 99)
 
 rm -rf benchmarks
@@ -17,7 +17,7 @@ do
         mkdir benchmarks/size_${size}/chance_${chance}
         for i in {1..10}
         do
-            ./builddir/demo ${size} ${i} ${chance} > benchmarks/size_${size}/chance_${chance}/iteration_${i}.json
+            ./build/demo ${size} ${i} ${chance} > benchmarks/size_${size}/chance_${chance}/iteration_${i}.json
         done
     done
 done
